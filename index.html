@@ -1,0 +1,204 @@
+<!DOCTYPE html ng-app="svod">
+    <head>
+        <title>Timsoft - Proto graphiques SVoD</title>
+        
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        
+        <script src="js/jquery.js"></script>
+        <script src="js/d3.js"></script>
+        
+        <script>
+        
+            //------------------------------------------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------------------------------------------
+            // REFERENCE DATA (sizes etc)
+            var pieRef                  =   {   height:         360,
+                                                width:          520,
+                                                radius:         180,
+                                                legendRectSize: 18,
+                                                legendSpacing:  8
+                                            };
+                                            
+            var ZONES                   =   ["France","USA","Europe","Autres"];
+                                                                                    
+
+            //------------------------------------------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------------------------------------------
+            // RANDOM DATA GENERATION
+            var getRandomInt            =   function(min, max) 
+                                            {
+                                                return Math.floor(Math.random() * (max - min + 1)) + min;
+                                            };
+                                            
+            var getRandomPercentage     =   function(numberBins)
+                                            {
+                                                var res = [];
+                                                var bin = getRandomInt(0, 100);
+                                                res.push(bin);
+                                                var total = bin;
+                                                for(var i=1; i <numberBins; i++)
+                                                {
+                                                    var remainder = 100 - total;
+                                                    bin = getRandomInt(0, remainder);
+                                                    if(i==numberBins - 1)
+                                                    {
+                                                        res.push(remainder);
+                                                    }
+                                                    else
+                                                    {
+                                                        res.push(bin);
+                                                    }
+                                                    total += bin;
+                                                };
+                                                
+                                                return res;
+                                            };
+
+
+            var generatePieData =   function()
+                                    {
+                                        var percentages = getRandomPercentage(4);
+                                        return ZONES.map( function(v, i) { return { label: v, value : percentages[i], enabled: true};});
+                                    };
+                                    
+            //------------------------------------------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------------------------------------------            
+            // PLOTTING
+            var pie =   d3  .layout   
+                            .pie()
+                            .value(function(d) { return d.value; })
+                            .sort(null);
+                            
+                            
+            var arc =   d3  .svg.arc()
+                            .outerRadius(pieRef.radius);
+            
+            
+            var plotPieData     =   function()
+                                    {
+                                        var color = d3.scale.category10();
+                                        
+                                        var data =  generatePieData();
+                                        
+                                        var svg =   d3  .select("#pie-chart")
+                                                        .append("svg")
+                                                        .attr('width', pieRef.width)
+                                                        .attr('height', pieRef.height)
+                                                        .append('g')
+                                                        .attr('transform', 'translate(' + (pieRef.radius) +  ',' + (pieRef.height / 2) + ')');
+                                            
+                                        var path =  svg .selectAll('path')
+                                                        .data(pie(data))
+                                                        .enter()
+                                                        .append('path')
+                                                        .attr('d', arc)
+                                                        .attr('fill', function(d, i) { 
+                                                            return color(d.data.label);
+                                                        })
+                                                        .each(function(d){ this._current = d;});
+                                                        
+                                        var legend = svg.selectAll('.legend')
+                                                        .data(pie(data))
+                                                        .enter()
+                                                        .append('g')
+                                                        .attr('class', 'legend')
+                                                        .attr('transform', function(d, i) {
+                                                            var height = pieRef.legendRectSize + pieRef.legendSpacing;
+                                                            var offset =  height * data.length / 2;
+                                                            var horz = pieRef.radius + 4 * pieRef.legendSpacing;
+                                                            var vert = i * height - offset;
+                                                            return 'translate(' + horz + ',' + vert + ')';
+                                                        });
+                                                        
+                                        legend          .append('rect')
+                                                        .attr('width', pieRef.legendRectSize)
+                                                        .attr('height', pieRef.legendRectSize)
+                                                        .style('fill', function(d, i) { return color(d.data.label); })
+                                                        .style('stroke', function(d, i) { return color(d.data.label); })
+                                                        
+                                        legend          .append('text')
+                                                        .attr('x', pieRef.legendRectSize + pieRef.legendSpacing)
+                                                        .attr('y', pieRef.legendRectSize - pieRef.legendSpacing)
+                                                        .text(function(d) { return d.data.label + " (" + d.data.value + "%)"; });
+                                    };
+
+            var movePieData     =   function()
+                                    {
+                                        var data =  generatePieData();
+                                        var path =      d3  .select("#pie-chart"). select("g").selectAll('path');                                                            
+                                        var legend =    d3  .select("#pie-chart"). select("g").selectAll('.legend');  
+                                        
+                                        path    .data(pie(data))
+                                                .transition()
+                                                .duration(750)
+                                                .attrTween  ('d',   function(d) 
+                                                                    {
+                                                                        var interpolate = d3.interpolate(this._current, d);
+                                                                        this._current = d;
+                                                                        return function(t) {
+                                                                            return arc(interpolate(t));
+                                                                        };
+                                                                    }
+                                                            );
+                                                            
+                                                          
+                                        legend  .data(pie(data))
+                                                .select("text")
+                                                .text(function(d) { return d.data.label + " (" + d.data.value + "%)"; });
+
+
+                                    };
+                                    
+
+                                    
+            
+                                    
+            //------------------------------------------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------------------------------------------
+            // BOOTSTRAPING
+            $(document).ready   (   function()
+                                    {
+                                        plotPieData();
+                                        $("#generate-pie-chart").click(movePieData);
+                                        setInterval(movePieData, 5000);
+                                    }
+                                );
+        </script>
+    </head>
+        
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2>Timsoft / SVoD - Prototypes</h2>
+                    <hr>
+                </div>
+            </div>
+            
+            
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3><span>Proto 1 : Graphe</span> <span id="generate-pie-chart" class="btn btn-success" style="float:right;">Regénérer</span></h3> 
+                    <hr>
+                    <div id="pie-chart" class="text-center">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>Proto 2 : Tableau de données</h3> 
+                    <hr>
+                    <svod-table />
+                </div>
+            </div>
+
+        </div>
+
+        
+    </body>
+</html>
