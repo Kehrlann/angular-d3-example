@@ -1,3 +1,8 @@
+body
+{
+    overflow-y: scroll;
+}
+
 .legend 
 {
     font-size: 12px;
@@ -11,4 +16,31 @@
 .pointer
 {
     cursor:pointer;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* IE/Edge */
+  user-select: none;           /* non-prefixed version, currently
+                                  not supported by any browser */
+}
+
+.input-slim
+{
+    margin-left:10px;
+    height:20px;
+    font-weight:normal;
+}
+
+.input-twochar
+{
+    width: 24px;
+}
+
+.input-sixchar
+{
+    width: 55px;
 }

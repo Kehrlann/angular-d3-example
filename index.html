@@ -193,51 +193,72 @@
                 </div>
             </div>
             
-            <div class="row">
+            <div class="row" ng-controller="svodTable">
                 <div class="col-sm-12">
-                    <h3>Proto 2 : Tableau de données</h3> 
+                    <h3>
+                        <span>Proto 2 : Tableau de données</span>
+                        <span id="generate-pie-chart" class="btn btn-danger btn-sm" style="float:right;" ng-click="clearFiltres()">
+                            <i class="fa fa-remove"></i>
+                            Supprimer filtres
+                        </span>
+                    </h3> 
                     <hr>
                     <div style=" margin-bottom:40px;">
-                        <table ng-controller="svodTable" class="table table-striped">
+                        <table class="table table-striped">
                             <thead>
-                                <th ng-click="clicTri('id')" class="pointer">
-                                    <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne == 'id'  && triAscendant"></i>
-                                    <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'id' && !triAscendant"></i>
-                                    <i class="fa fa-fw" ng-if="selectedColonne != 'id'"></i>
-                                    Code INSEE
+                                <th>
+                                    <span ng-click="clicTri('id')" class="pointer noselect">
+                                        <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne == 'id'  && triAscendant"></i>
+                                        <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'id' && !triAscendant"></i>
+                                        <i class="fa fa-fw" ng-if="selectedColonne != 'id'"></i>
+                                        Code
+                                    </span>
+                                    <input type="text" class="input-slim input-sixchar" ng-model="filtre.id" />
                                 </th>
-                                <th ng-click="clicTri('nom')"  class="pointer">
-                                    <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'nom'  && triAscendant"></i>
-                                    <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'nom'  && !triAscendant"></i>
-                                    <i class="fa fa-fw" ng-if="selectedColonne != 'nom'"></i>
-                                    Nom
+                                <th>
+                                    <span ng-click="clicTri('nom')"  class="pointer noselect">
+                                        <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'nom'  && triAscendant"></i>
+                                        <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'nom'  && !triAscendant"></i>
+                                        <i class="fa fa-fw" ng-if="selectedColonne != 'nom'"></i>
+                                        Nom
+                                    </span>
+                                    <input type="text" class="input-slim" ng-model="filtre.slug" />
                                 </th>
-                                <th ng-click="clicTri('departement')"  class="pointer">
-                                    <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'departement'  && triAscendant"></i>
-                                    <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'departement'  && !triAscendant"></i>
-                                    <i class="fa fa-fw" ng-if="selectedColonne != 'departement'"></i>
-                                    Département
+                                <th>
+                                    <span ng-click="clicTri('departement')"  class="pointer noselect">
+                                        <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'departement'  && triAscendant"></i>
+                                        <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'departement'  && !triAscendant"></i>
+                                        <i class="fa fa-fw" ng-if="selectedColonne != 'departement'"></i>
+                                        Dépt.
+                                    </span>
+                                    <input type="text" class="input-slim input-twochar" ng-model="filtre.departement" />
                                 </th>
-                                <th ng-click="clicTri('region')"  class="pointer">
-                                    <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'region'  && triAscendant"></i>
-                                    <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'region'  && !triAscendant"></i>
-                                    <i class="fa fa-fw" ng-if="selectedColonne != 'region'"></i>
-                                    Région
+                                <th>
+                                    <span ng-click="clicTri('region')"  class="pointer noselect">
+                                        <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'region'  && triAscendant"></i>
+                                        <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'region'  && !triAscendant"></i>
+                                        <i class="fa fa-fw" ng-if="selectedColonne != 'region'"></i>
+                                        Région
+                                    </span>
+                                    <input type="text" class="input-slim input-twochar" ng-model="filtre.region" />
                                 </th>
-                                <th ng-click="clicTri('population')"  class="pointer">
-                                    <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'population'  && triAscendant"></i>
-                                    <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'population'  && !triAscendant"></i>
-                                    <i class="fa fa-fw" ng-if="selectedColonne != 'population'"></i>
-                                    Population
+                                <th>
+                                    <span ng-click="clicTri('population')"  class="pointer noselect">
+                                        <i class="fa fa-fw fa-sort-amount-asc" ng-if="selectedColonne ==  'population'  && triAscendant"></i>
+                                        <i class="fa fa-fw fa-sort-amount-desc" ng-if="selectedColonne == 'population'  && !triAscendant"></i>
+                                        <i class="fa fa-fw" ng-if="selectedColonne != 'population'"></i>
+                                        Pop.
+                                    </span>
+                                    <input type="text" class="input-slim input-sixchar" ng-model="filtre.population" />
                                 </th>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="ville in villes | orderBy: tri">
-                                    <td><i class="fa fa-fw"></i>{{ ville.id }}</td>
+                                <tr ng-repeat="ville in villes | filter:filtre:isNullOrEqual | orderBy: tri">
+                                    <td class="text-center">{{ ville.id }}</td>
                                     <td><i class="fa fa-fw"></i>{{ ville.nom }}</td>
-                                    <td><i class="fa fa-fw"></i>{{ ville.departement }}</td>
-                                    <td><i class="fa fa-fw"></i>{{ ville.region }}</td>
-                                    <td><i class="fa fa-fw"></i>{{ ville.population }}</th>
+                                    <td class="text-center">{{ ville.departement }}</td>
+                                    <td class="text-center">{{ ville.region }}</td>
+                                    <td class="text-center">{{ ville.population }}</th>
                                 </tr>
                             </tbody>
                         </table>
