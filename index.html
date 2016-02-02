@@ -253,7 +253,7 @@
                                 </th>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="ville in villes | filter:filtre:isNullOrEqual | orderBy: tri">
+                                <tr ng-repeat="ville in big | filter:filtre:isNullOrEqual | orderBy: tri track by ville.id_unique">
                                     <td class="text-center">{{ ville.id }}</td>
                                     <td><i class="fa fa-fw"></i>{{ ville.nom }}</td>
                                     <td class="text-center">{{ ville.departement }}</td>

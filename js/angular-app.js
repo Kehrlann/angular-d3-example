@@ -79,7 +79,22 @@
                             { id : "97415",  region :	"04", departement :	"974"   , nom : "Saint-Paul",	            population : 104646    } 
                         ].map(function(v) { v["slug"] = slugify(v.nom); return v;});
                         
-                        
+        // CHANGER ICI la valeur de repeat pour multiplier le tableau par le nombre de fois voulu
+        var repeat = 1;
+        var range = Array.apply(null, Array(repeat)).map(function (_, i) {return i;});
+        var temp    =   range   .map    (   function(i) 
+                                            {  
+                                                return $scope.villes    .map    (   function(e, idx) 
+                                                                                    { 
+                                                                                        var ret = { id_unique: i*100 + idx};
+                                                                                        angular.extend(ret, e);
+                                                                                        return ret;
+                                                                                    }
+                                                                                );
+                                            }
+                                        );
+                                        
+        $scope.big = [].concat.apply([], temp);
                         
         $scope.tri = "id";
         $scope.triAscendant = true;
